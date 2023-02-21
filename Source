@@ -182,7 +182,7 @@ local Window = Rayfield:CreateWindow({
     LoadingSubtitle = "by Twurtle",
     ConfigurationSaving = {
        Enabled = true,
-       FolderName = Turtle, -- Create a custom folder for your hub/game
+       FolderName = 'Turtle', -- Create a custom folder for your hub/game
        FileName = "TurtleHub"
     },
     Discord = {
