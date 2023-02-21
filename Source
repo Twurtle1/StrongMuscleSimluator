@@ -1,0 +1,504 @@
+local Variables = {
+    ['Main'] = {
+        ['AutoClick'] = false,
+        ['EquipWeight'] = false,
+        ['AutoRebirth'] = false
+    },
+    ['Chests'] = {
+        ['AutoChests'] = false,
+        ['AutoWinChest'] = false,
+        ['AutoDailyChest'] = false,
+        ['AutoVIPChest'] = false,
+        ['AutoGemChest'] = false,
+        ['AutoSpin'] = false,
+        ['WinChest'] = game:GetService("Workspace").Oduller.WINReward.PadShop,
+        ['DailyChest'] = game:GetService("Workspace").Oduller.DailyChest.PadShop,
+        ['VIPChest'] = game:GetService("Workspace").Oduller.VIPReward.PadShop,
+        ['GemChest'] = game:GetService("Workspace").Oduller.GemReward.PadShop,
+    },
+    ['Areas'] = {
+        ['AutoAreas'] = false,
+        ['AutoVip'] = false,
+        ['AutoKing'] = false,
+        ['AutoTraining'] = false
+    },
+    ['Teleports'] = {
+        ['Spawn'] = game:GetService("Workspace").Haritalar.Mekanlar.AnaMekan.SafezoneAyirac,
+        ['Town'] = game:GetService("Workspace").Eggs.Town.Handle,
+        ['Beach'] = game:GetService("Workspace").Eggs.Beach.Handle,
+        ['Space'] = game:GetService("Workspace").Eggs.Crystal.Handle,
+        ['Forest'] = game:GetService("Workspace").Eggs.Forest.Handle,
+        ['Desert'] = game:GetService("Workspace").Eggs.Desert.Handle,
+        ['Hell'] = game:GetService("Workspace").Eggs.Hell.Handle,
+        ['Candy'] = game:GetService("Workspace").Eggs.Cat.Handle,
+        ['Void'] = game:GetService("Workspace").Eggs.Void.Handle,
+        ['VIPArea'] = game:GetService("Workspace").ScriptSabitleri.VIP,
+        ['TrainingArea'] = game:GetService("Workspace").Safezone.Training,
+        ['KingArea'] = game:GetService("Workspace").KingOfTheHill.Hill.Zone.Part,
+        ['Auras'] = game:GetService("Workspace").ScriptSabitleri.Aura,
+        ['Upgrades'] = game:GetService("Workspace").Safezone.Upgrade,
+    },
+    ['Eggs'] = {
+        ['Egg'] = nil,
+        ['OpenEgg'] = false,
+        ['AutoMerge'] = false,
+        ['AutoDelete'] = false,
+        ['PetsToDelete'] = nil,
+        ['AllEggs'] = {}
+    }
+}
+
+getgenv().rejoin = game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+    if child.Name == 'ErrorPrompt' and child:FindFirstChild('MessageArea') and child.MessageArea:FindFirstChild("ErrorFrame") then
+        game:GetService("TeleportService"):Teleport(game.PlaceId)
+    end
+end)
+
+local vu = game:GetService("VirtualUser")
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+    vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+    wait(1)
+    vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+end)
+
+function EnableAllGamepasses()
+    for i,v in pairs(game:GetService("Players").LocalPlayer.Data:GetChildren()) do
+        if v:IsA('BoolValue') then
+            v.Value = true
+        end
+    end
+end
+
+function UnlockAllAreas()
+    for i,v in pairs(game:GetService("Players").LocalPlayer.Zones:GetChildren()) do
+        if v:IsA('BoolValue') then
+            v.Value = true
+        end
+    end
+end
+
+function AutoWeight()
+    spawn(function()
+        while Variables.Main.EquipWeight do task.wait(10)
+            local args = {
+                [1] = "NumberOne",
+                [2] = true
+            }
+
+            game:GetService("ReplicatedStorage").Events.SkillToggle:FireServer(unpack(args))
+        end
+    end)
+end
+
+function AutoRebirth()
+    spawn(function()
+        while Variables.Main.AutoRebirth do task.wait(10)
+            game:GetService("ReplicatedStorage").Events.Rebirth:FireServer()
+        end
+    end)
+end
+
+function AutoChest(Chest)
+    spawn(function()
+        if Variables.Chests.AutoWinChest or Variables.Chests.AutoDailyChest or Variables.Chests.AutoGemChest or Variables.Chests.AutoVIPChest then
+            Variables.Chests.AutoChests = true
+        else
+            Variables.Chests.AutoChests = false
+        end
+        while Variables.Chests.AutoChests do task.wait()
+            firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild('Head'), Chest,0)
+            firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild('Head'), Chest,1)
+        end
+    end)
+end
+
+function AutoSpin()
+    spawn(function()
+        while Variables.Chests.AutoSpin do task.wait()
+            game:GetService("ReplicatedStorage").Events:FindFirstChild("Spin Wheel"):FireServer()
+            wait(60)
+        end
+    end)
+end
+
+function AutoTP(pos)
+    spawn(function()
+        if Variables.Areas.AutoVip or Variables.Areas.AutoTraining or Variables.Areas.AutoKing then
+            Variables.Areas.AutoAreas = true
+        else
+            Variables.Areas.AutoAreas = false
+        end
+        while Variables.Areas.AutoAreas do task.wait()
+            if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart') then
+            game.Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart').CFrame = pos.CFrame
+            task.wait(60)
+            end
+        end
+    end)
+end
+
+function TP(pos)
+    if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart') then
+        game.Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart').CFrame = pos.CFrame
+    end
+end
+
+function AutoOpenEgg(Egg)
+    spawn(function()
+        while Variables.Eggs.OpenEgg do task.wait()
+            local args = {
+                [1] = Egg,
+                [2] = 5
+            }
+            
+            game:GetService("ReplicatedStorage").Events.HatchEgg:InvokeServer(unpack(args))
+        end
+    end)
+end
+
+function AutoMergePet()
+    spawn(function()
+        while Variables.Eggs.AutoMerge do task.wait()
+            local args = {
+                [1] = "Craft All"
+            }
+            
+            game:GetService("ReplicatedStorage").Events.PetAction:InvokeServer(unpack(args))
+            wait(10)
+        end
+    end)
+end
+
+function AutoDeletePet()
+    
+end
+
+
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/CustomFIeld/main/RayField.lua'))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "Turtle Scripts - Strong Muscle Simulator",
+    LoadingTitle = "Turtle Scripts",
+    LoadingSubtitle = "by Twurtle",
+    ConfigurationSaving = {
+       Enabled = true,
+       FolderName = Turtle, -- Create a custom folder for your hub/game
+       FileName = "TurtleHub"
+    },
+    Discord = {
+       Enabled = false,
+       Invite = "sirius", -- The Discord invite code, do not include discord.gg/
+       RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+    },
+    KeySystem = false, -- Set this to true to use our key system
+    KeySettings = {
+       Title = "Sirius Hub",
+       Subtitle = "Key System",
+       Note = "Join the discord (discord.gg/sirius)",
+       FileName = "SiriusKey",
+       SaveKey = true,
+       GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+       Key = "Hello"
+    }
+ })
+
+
+
+local MainTab = Window:CreateTab("Main") -- Title, Image
+
+ local Paragraph = MainTab:CreateParagraph({Title = "Description", Content = "This Script has Configuration Saving and rejoin when kick, so it is completely AFKable. NOTE:Sometimes roblox may crash causing it to stop"})
+
+ local AllGamepassesButton = MainTab:CreateButton({
+    Name = "Enable All Gamepasses",
+    Info = "NOTE: Some Gamepasses may not work, even when set to true",
+    Interact = 'Changable',
+    Callback = function()
+        EnableAllGamepasses()
+    end,
+ })
+
+local UnlockAllAreasButton = MainTab:CreateButton({
+    Name = "Unlock All Areas",
+    Interact = 'Changable',
+    Callback = function()
+        UnlockAllAreas()
+    end,
+ })
+
+ local EquipWeightToggle = MainTab:CreateToggle({
+    Name = "Auto Equip Weight",
+    CurrentValue = false,
+    Flag = "Weight", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Main.EquipWeight = Value
+        AutoWeight()
+    end,
+ })
+
+
+
+local ChestsTab = Window:CreateTab("Chests") -- Title, Image
+
+ local Section = ChestsTab:CreateSection("Chests",true) -- The 2nd argument is to tell if its only a Title and doesnt contain elements
+
+ local DailyChestToggle = ChestsTab:CreateToggle({
+    Name = "Auto Collect Daily Chest",
+    CurrentValue = false,
+    Flag = "DailyChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Chests.AutoDailyChest = Value
+        AutoChest(Variables.Chests.DailyChest)
+    end,
+ })
+
+ local VIPChestToggle = ChestsTab:CreateToggle({
+    Name = "Auto Collect VIP Chest",
+    CurrentValue = false,
+    Flag = "VIPChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Chests.AutoVIPChest = Value
+        AutoChest(Variables.Chests.VIPChest)
+    end,
+ })
+
+ local GemChestToggle = ChestsTab:CreateToggle({
+    Name = "Auto Collect Gem Chest",
+    CurrentValue = false,
+    Flag = "GemChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Chests.AutoGemChest = Value
+        AutoChest(Variables.Chests.GemChest)
+    end,
+ })
+
+ local WinChestToggle = ChestsTab:CreateToggle({
+    Name = "Auto Collect Win Chest",
+    CurrentValue = false,
+    Flag = "WinChest", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Chests.AutoWinChest = Value
+        AutoChest(Variables.Chests.WinChest)
+    end,
+ })
+
+ local Section = ChestsTab:CreateSection("Wheel",true) -- The 2nd argument is to tell if its only a Title and doesnt contain elements
+
+ local SpinToggle = ChestsTab:CreateToggle({
+    Name = "Auto Spin",
+    CurrentValue = false,
+    Flag = "Spin", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Chests.AutoSpin = Value
+        AutoSpin()
+    end,
+ })
+
+
+
+local EggsTab = Window:CreateTab("Eggs") -- Title, Image
+
+for i,v in pairs(game:GetService("Workspace").Eggs:GetChildren()) do
+    if not table.find(Variables.Eggs.AllEggs,v.Name) then
+        table.insert(Variables.Eggs.AllEggs,v.Name)
+    end
+end
+
+ local Label = EggsTab:CreateLabel("Some eggs are named weirdly, such as: Space being 'Crystal', and Candy being 'cat'")
+
+ local Dropdown = EggsTab:CreateDropdown({
+    Name = "Eggs",
+    Options = Variables.Eggs.AllEggs,
+    CurrentOption = 'none',
+    Flag = "EggOptions", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Option)
+        Variables.Eggs.Egg = Option
+    end,
+ })
+
+ local OpenToggle = EggsTab:CreateToggle({
+    Name = "Auto Open Egg",
+    CurrentValue = false,
+    Flag = "OpenEgg", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Eggs.OpenEgg = Value
+        AutoOpenEgg(Variables.Eggs.Egg)
+    end,
+ })
+
+ local MergeToggle = EggsTab:CreateToggle({
+    Name = "Auto Merge Pets",
+    CurrentValue = false,
+    Flag = "MergePets", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Eggs.AutoMerge = Value
+        AutoMergePet()
+    end,
+ })
+
+
+
+local AreasTab = Window:CreateTab("Areas") -- Title, Image
+
+ local Label = AreasTab:CreateLabel("Do NOT use all these at once")
+
+ local VIPToggle = AreasTab:CreateToggle({
+    Name = "Auto Vip Area",
+    CurrentValue = false,
+    Flag = "VIPArea", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Areas.AutoVip = Value
+        AutoTP(Variables.Teleports.VIPArea)
+    end,
+ })
+
+ local KingToggle = AreasTab:CreateToggle({
+    Name = "Auto King of the Hill",
+    CurrentValue = false,
+    Flag = "KingArea", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Areas.AutoKing = Value
+        AutoTP(Variables.Teleports.KingArea)
+    end,
+ })
+
+ local TrainingToggle = AreasTab:CreateToggle({
+    Name = "Auto Training Area",
+    CurrentValue = false,
+    Flag = "TrainingArea", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Areas.AutoTraining = Value
+        AutoTP(Variables.Teleports.TrainingArea)
+    end,
+ })
+
+
+
+local TPTab = Window:CreateTab("Teleports") -- Title, Image
+
+ local Label = TPTab:CreateLabel("You will not be able to teleport too far away from the zones you have unlocked")
+
+ local Section = TPTab:CreateSection("Zones",true) -- The 2nd argument is to tell if its only a Title and doesnt contain elements
+
+ local TeleportSpawnButton = TPTab:CreateButton({
+    Name = "Spawn",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Spawn)
+    end,
+ })
+
+ local TeleportTownButton = TPTab:CreateButton({
+    Name = "Town",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Town)
+    end,
+ })
+
+ local TeleportBeachButton = TPTab:CreateButton({
+    Name = "Beach",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Beach)
+    end,
+ })
+
+ local TeleportSpaceButton = TPTab:CreateButton({
+    Name = "Space",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Space)
+    end,
+ })
+
+ local TeleportForestButton = TPTab:CreateButton({
+    Name = "Forest",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Forest)
+    end,
+ })
+
+ local TeleportDesertButton = TPTab:CreateButton({
+    Name = "Desert",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Desert)
+    end,
+ })
+
+ local TeleportHellButton = TPTab:CreateButton({
+    Name = "Hell",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Hell)
+    end,
+ })
+
+ local TeleportCandyButton = TPTab:CreateButton({
+    Name = "Candy",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Candy)
+    end,
+ })
+
+ local TeleportVoidButton = TPTab:CreateButton({
+    Name = "Void",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Void)
+    end,
+ })
+
+ local Section = TPTab:CreateSection("Areas",true) -- The 2nd argument is to tell if its only a Title and doesnt contain elements
+
+ local TeleportVIPButton = TPTab:CreateButton({
+    Name = "VIP",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.VIPArea)
+    end,
+ })
+
+ local TeleportHillButton = TPTab:CreateButton({
+    Name = "Hill",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.KingArea)
+    end,
+ })
+
+ local TeleportTrainingButton = TPTab:CreateButton({
+    Name = "Training",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.TrainingArea)
+    end,
+ })
+
+ local Section = TPTab:CreateSection("Shops",true) -- The 2nd argument is to tell if its only a Title and doesnt contain elements
+
+ local TeleportAurasButton = TPTab:CreateButton({
+    Name = "Auras",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Auras)
+    end,
+ })
+
+ local TeleportUpgradesButton = TPTab:CreateButton({
+    Name = "Upgrades",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Upgrades)
+    end,
+ })
+
+
+
+ local AboutTab = Window:CreateTab("About") -- Title, Image
+
+ local Paragraph = AboutTab:CreateParagraph({Title = "Description", Content = "This Script has many hidden features including: Anti AFK, Auto Rejoin Upon Kick, Configuration Saving and many more"})
+
+ local Paragraph = AboutTab:CreateParagraph({Title = "Credits", Content = "Twurtle"})
