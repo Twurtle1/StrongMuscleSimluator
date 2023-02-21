@@ -148,7 +148,7 @@ function AutoOpenEgg(Egg)
         while Variables.Eggs.OpenEgg do task.wait()
             local args = {
                 [1] = Egg,
-                [2] = 5
+                [2] = 2
             }
             
             game:GetService("ReplicatedStorage").Events.HatchEgg:InvokeServer(unpack(args))
