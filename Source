@@ -77,6 +77,27 @@ function UnlockAllAreas()
     end
 end
 
+function AutoWeight()
+    spawn(function()
+        while Variables.Main.EquipWeight do task.wait(10)
+            local args = {
+                [1] = "NumberOne",
+                [2] = true
+            }
+
+            game:GetService("ReplicatedStorage").Events.SkillToggle:FireServer(unpack(args))
+        end
+    end)
+end
+
+function AutoRebirth()
+    spawn(function()
+        while Variables.Main.AutoRebirth do task.wait(10)
+            game:GetService("ReplicatedStorage").Events.Rebirth:FireServer()
+        end
+    end)
+end
+
 function AutoChest(Chest)
     spawn(function()
         if Variables.Chests.AutoWinChest or Variables.Chests.AutoDailyChest or Variables.Chests.AutoGemChest or Variables.Chests.AutoVIPChest then
@@ -146,6 +167,10 @@ function AutoMergePet()
             wait(10)
         end
     end)
+end
+
+function AutoDeletePet()
+    
 end
 
 
