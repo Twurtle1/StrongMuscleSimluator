@@ -79,14 +79,13 @@ end
 
 function AutoWeight()
     spawn(function()
-        game:GetService("Players").LocalPlayer.Data.AutoClick = true
         while Variables.Main.EquipWeight do task.wait(10)
-            if not game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool") then
-            game:GetService("ReplicatedStorage").Events.SkillToggle:FireServer("NumberOne", true)
-            end
-            game:GetService("ReplicatedStorage").Events.Weight:FireServer(
-            game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool").Name
-            )
+            local args = {
+                [1] = "NumberOne",
+                [2] = true
+            }
+
+            game:GetService("ReplicatedStorage").Events.SkillToggle:FireServer(unpack(args))
         end
     end)
 end
