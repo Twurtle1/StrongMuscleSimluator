@@ -1,6 +1,5 @@
 local Variables = {
     ['Main'] = {
-        ['AutoClick'] = false,
         ['EquipWeight'] = false,
         ['AutoRebirth'] = false
     },
@@ -42,8 +41,6 @@ local Variables = {
         ['Egg'] = nil,
         ['OpenEgg'] = false,
         ['AutoMerge'] = false,
-        ['AutoDelete'] = false,
-        ['PetsToDelete'] = nil,
         ['AllEggs'] = {}
     }
 }
@@ -63,14 +60,6 @@ end)
 
 function EnableAllGamepasses()
     for i,v in pairs(game:GetService("Players").LocalPlayer.Data:GetChildren()) do
-        if v:IsA('BoolValue') then
-            v.Value = true
-        end
-    end
-end
-
-function UnlockAllAreas()
-    for i,v in pairs(game:GetService("Players").LocalPlayer.Zones:GetChildren()) do
         if v:IsA('BoolValue') then
             v.Value = true
         end
@@ -169,11 +158,6 @@ function AutoMergePet()
     end)
 end
 
-function AutoDeletePet()
-    
-end
-
-
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/CustomFIeld/main/RayField.lua'))()
 
 local Window = Rayfield:CreateWindow({
@@ -214,14 +198,6 @@ local MainTab = Window:CreateTab("Main") -- Title, Image
     Interact = 'Changable',
     Callback = function()
         EnableAllGamepasses()
-    end,
- })
-
-local UnlockAllAreasButton = MainTab:CreateButton({
-    Name = "Unlock All Areas",
-    Interact = 'Changable',
-    Callback = function()
-        UnlockAllAreas()
     end,
  })
 
