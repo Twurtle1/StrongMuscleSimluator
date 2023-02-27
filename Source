@@ -236,13 +236,13 @@ end
 local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/CustomFIeld/main/RayField.lua'))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Turtle Scripts - Strong Muscle Simulator",
-    LoadingTitle = "Turtle Scripts",
+    Name = "Twurtle Scripts - Strong Muscle Simulator",
+    LoadingTitle = "Twurtle Scripts",
     LoadingSubtitle = "by Twurtle",
     ConfigurationSaving = {
        Enabled = true,
-       FolderName = 'Turtle', -- Create a custom folder for your hub/game
-       FileName = "TurtleHub"
+       FolderName = 'Twurtle', -- Create a custom folder for your hub/game
+       FileName = "TwurtleHub"
     },
     Discord = {
        Enabled = false,
