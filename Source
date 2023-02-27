@@ -1,7 +1,7 @@
 local Variables = {
     ['Main'] = {
         ['EquipWeight'] = false,
-        ['AutoRebirth'] = false
+        ['AutoLiftWeight'] = false,
     },
     ['Chests'] = {
         ['AutoChests'] = false,
@@ -10,16 +10,32 @@ local Variables = {
         ['AutoVIPChest'] = false,
         ['AutoGemChest'] = false,
         ['AutoSpin'] = false,
+        ['AutoGift'] = false,
         ['WinChest'] = game:GetService("Workspace").Oduller.WINReward.PadShop,
         ['DailyChest'] = game:GetService("Workspace").Oduller.DailyChest.PadShop,
         ['VIPChest'] = game:GetService("Workspace").Oduller.VIPReward.PadShop,
-        ['GemChest'] = game:GetService("Workspace").Oduller.GemReward.PadShop,
+        ['GemChest'] = game:GetService("Workspace").Oduller.GemReward.PadShop
+    },
+    ['FreeRewards'] = {
+        "Potion1",
+        "Muscle1",
+        "Gem1",
+        "Potion2",
+        "Muscle2",
+        "Win1",
+        "Gem2",
+        "Win2",
+        "Limited1"
     },
     ['Areas'] = {
+        ['BestArea'] = nil,
         ['AutoAreas'] = false,
         ['AutoVip'] = false,
         ['AutoKing'] = false,
-        ['AutoTraining'] = false
+        ['AutoTraining'] = false,
+        ['AutoCandy'] = false,
+        ['AutoMoon'] = false,
+        ['AutoBest'] = false
     },
     ['Teleports'] = {
         ['Spawn'] = game:GetService("Workspace").Haritalar.Mekanlar.AnaMekan.SafezoneAyirac,
@@ -31,19 +47,28 @@ local Variables = {
         ['Hell'] = game:GetService("Workspace").Eggs.Hell.Handle,
         ['Candy'] = game:GetService("Workspace").Eggs.Cat.Handle,
         ['Void'] = game:GetService("Workspace").Eggs.Void.Handle,
+        ['Moon'] = game:GetService("Workspace").Eggs.Moon.Handle,
         ['VIPArea'] = game:GetService("Workspace").ScriptSabitleri.VIP,
         ['TrainingArea'] = game:GetService("Workspace").Safezone.Training,
         ['KingArea'] = game:GetService("Workspace").KingOfTheHill.Hill.Zone.Part,
+        ['CandyArea'] = game:GetService("Workspace").ScriptSabitleri.Training2,
+        ['MoonArea'] = game:GetService("Workspace").Haritalar.Mekanlar.Moon.Model["Meshes/Town_Cylinder.002"],
         ['Auras'] = game:GetService("Workspace").ScriptSabitleri.Aura,
         ['Upgrades'] = game:GetService("Workspace").Safezone.Upgrade,
+        ['Wheel'] = game:GetService("Workspace").Safezone.carkifelek
     },
     ['Eggs'] = {
         ['Egg'] = nil,
         ['OpenEgg'] = false,
         ['AutoMerge'] = false,
         ['AllEggs'] = {}
+    },
+    ['Gamepasses'] = {
+        ['VIP'] = game:GetService("Players").LocalPlayer.Data.VIP.Value
     }
 }
+
+
 
 getgenv().rejoin = game:GetService("CoreGui").RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
     if child.Name == 'ErrorPrompt' and child:FindFirstChild('MessageArea') and child.MessageArea:FindFirstChild("ErrorFrame") then
@@ -66,15 +91,21 @@ function EnableAllGamepasses()
     end
 end
 
+function AutoEWeight()
+    spawn(function()
+        while Variables.Main.EquipWeight do task.wait()
+            if game.Players.LocalPlayer.Character:FindFirstChildOfClass("Tool") == nil then
+                game:GetService("ReplicatedStorage").Events.SkillToggle:FireServer("NumberOne", true)
+            end
+        end
+    end)
+end
+
 function AutoWeight()
     spawn(function()
-        while Variables.Main.EquipWeight do task.wait(10)
-            local args = {
-                [1] = "NumberOne",
-                [2] = true
-            }
-
-            game:GetService("ReplicatedStorage").Events.SkillToggle:FireServer(unpack(args))
+        while Variables.Main.AutoLiftWeight do task.wait()
+            local Weight = game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Tool").Name
+            game:GetService("ReplicatedStorage").Events.Weight:FireServer(Weight)
         end
     end)
 end
@@ -95,8 +126,11 @@ function AutoChest(Chest)
             Variables.Chests.AutoChests = false
         end
         while Variables.Chests.AutoChests do task.wait()
-            firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild('Head'), Chest,0)
-            firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild('Head'), Chest,1)
+            if Chest.BillboardGui.Timer.Text == "Claim" or "Redeem" then
+                firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild('Head'), Chest,0)
+                firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild('Head'), Chest,1)
+                
+            end
         end
     end)
 end
@@ -110,9 +144,23 @@ function AutoSpin()
     end)
 end
 
+function AutoGift()
+    spawn(function()
+        while Variables.Chests.AutoGift do task.wait()
+            for i,v in pairs(Variables.FreeRewards) do
+                local args = {
+                    [1] = v
+                }
+
+                game:GetService("ReplicatedStorage").Events.FreeGift:FireServer(unpack(args))
+            end
+        end
+    end)
+end
+
 function AutoTP(pos)
     spawn(function()
-        if Variables.Areas.AutoVip or Variables.Areas.AutoTraining or Variables.Areas.AutoKing then
+        if Variables.Areas.AutoVip or Variables.Areas.AutoTraining or Variables.Areas.AutoKing or Variables.Areas.AutoCandy or Variables.Areas.AutoMoon then
             Variables.Areas.AutoAreas = true
         else
             Variables.Areas.AutoAreas = false
@@ -122,6 +170,33 @@ function AutoTP(pos)
             game.Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart').CFrame = pos.CFrame
             task.wait(60)
             end
+        end
+    end)
+end
+
+function FindBest()
+    if game.Players.LocalPlayer.leaderstats.Rebirth.Value >= 250 and game.Players.LocalPlayer.leaderstats.Muscle.Value >= 100000000000000 then
+        Variables.Areas.BestArea = Variables.Teleports.MoonArea
+    elseif game.Players.LocalPlayer.leaderstats.Rebirth.Value >= 100 and game.Players.LocalPlayer.leaderstats.Muscle.Value >= 1000000000000 then
+        Variables.Areas.BestArea = Variables.Teleports.CandyArea
+    elseif Variables.Gamepasses.VIP then
+        Variables.Areas.BestArea = Variables.Teleports.VIPArea
+    elseif game.Players.LocalPlayer.leaderstats.Rebirth.Value >= 15 then
+        Variables.Areas.BestArea = Variables.Teleports.TrainingArea
+    else
+        Variables.Areas.BestArea = Variables.Teleports.KingArea
+    end
+end
+
+function BestTP()
+    spawn(function()
+        while Variables.Areas.AutoBest do
+            FindBest()
+            local pos = Variables.Areas.BestArea
+            if game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart') then
+                game.Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart').CFrame = pos.CFrame
+            end
+            task.wait(10)
         end
     end)
 end
@@ -204,14 +279,22 @@ local MainTab = Window:CreateTab("Main") -- Title, Image
  local EquipWeightToggle = MainTab:CreateToggle({
     Name = "Auto Equip Weight",
     CurrentValue = false,
-    Flag = "Weight", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Flag = "EquipWeight", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
     Callback = function(Value)
         Variables.Main.EquipWeight = Value
-        AutoWeight()
+        AutoEWeight()
     end,
  })
 
-
+--  local LiftWeightToggle = MainTab:CreateToggle({
+--     Name = "Auto Lift Weight",
+--     CurrentValue = false,
+--     Flag = "LiftWeight", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+--     Callback = function(Value)
+--         Variables.Main.AutoLiftWeight = Value
+--         AutoWeight()
+--     end,
+--  })
 
 local ChestsTab = Window:CreateTab("Chests") -- Title, Image
 
@@ -257,7 +340,7 @@ local ChestsTab = Window:CreateTab("Chests") -- Title, Image
     end,
  })
 
- local Section = ChestsTab:CreateSection("Wheel",true) -- The 2nd argument is to tell if its only a Title and doesnt contain elements
+ local Section = ChestsTab:CreateSection("Other",true) -- The 2nd argument is to tell if its only a Title and doesnt contain elements
 
  local SpinToggle = ChestsTab:CreateToggle({
     Name = "Auto Spin",
@@ -268,6 +351,16 @@ local ChestsTab = Window:CreateTab("Chests") -- Title, Image
         AutoSpin()
     end,
  })
+
+--  local RewardToggle = ChestsTab:CreateToggle({
+--     Name = "Auto Free Reward",
+--     CurrentValue = false,
+--     Flag = "FreeReward", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+--     Callback = function(Value)
+--         Variables.Chests.AutoGift = Value
+--         AutoGift()
+--     end,
+--  })
 
 
 
@@ -315,7 +408,21 @@ end
 
 local AreasTab = Window:CreateTab("Areas") -- Title, Image
 
- local Label = AreasTab:CreateLabel("Do NOT use all these at once")
+ local Label = AreasTab:CreateLabel("Only Use These INDIVIDUALLY")
+
+ local Section = AreasTab:CreateSection("All Areas",true) 
+
+ local BestToggle = AreasTab:CreateToggle({
+    Name = "Auto Best Area",
+    CurrentValue = false,
+    Flag = "BestArea", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Areas.AutoBest = Value
+        BestTP()
+    end,
+ })
+
+ local Section = AreasTab:CreateSection("Individual Areas",true) -- The 2nd argument is to tell if its only a Title and doesnt contain elements
 
  local VIPToggle = AreasTab:CreateToggle({
     Name = "Auto Vip Area",
@@ -344,6 +451,26 @@ local AreasTab = Window:CreateTab("Areas") -- Title, Image
     Callback = function(Value)
         Variables.Areas.AutoTraining = Value
         AutoTP(Variables.Teleports.TrainingArea)
+    end,
+ })
+
+ local CandyToggle = AreasTab:CreateToggle({
+    Name = "Auto Candy Area",
+    CurrentValue = false,
+    Flag = "CandyArea", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Areas.AutoCandy = Value
+        AutoTP(Variables.Teleports.CandyArea)
+    end,
+ })
+
+ local MoonToggle = AreasTab:CreateToggle({
+    Name = "Auto Moon Area",
+    CurrentValue = false,
+    Flag = "MoonArea", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+    Callback = function(Value)
+        Variables.Areas.AutoMoon = Value
+        AutoTP(Variables.Teleports.MoonArea)
     end,
  })
 
@@ -427,10 +554,18 @@ local TPTab = Window:CreateTab("Teleports") -- Title, Image
     end,
  })
 
+ local TeleportMoonButton = TPTab:CreateButton({
+    Name = "Moon",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Moon)
+    end,
+ })
+
  local Section = TPTab:CreateSection("Areas",true) -- The 2nd argument is to tell if its only a Title and doesnt contain elements
 
  local TeleportVIPButton = TPTab:CreateButton({
-    Name = "VIP",
+    Name = "VIP Area",
     Interact = 'Changable',
     Callback = function()
         TP(Variables.Teleports.VIPArea)
@@ -446,10 +581,26 @@ local TPTab = Window:CreateTab("Teleports") -- Title, Image
  })
 
  local TeleportTrainingButton = TPTab:CreateButton({
-    Name = "Training",
+    Name = "Training Area",
     Interact = 'Changable',
     Callback = function()
         TP(Variables.Teleports.TrainingArea)
+    end,
+ })
+
+ local TeleportCandyAreaButton = TPTab:CreateButton({
+    Name = "Candy Area",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.CandyArea)
+    end,
+ })
+
+ local TeleportMoonAreaButton = TPTab:CreateButton({
+    Name = "Moon Area",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.MoonArea)
     end,
  })
 
@@ -470,6 +621,15 @@ local TPTab = Window:CreateTab("Teleports") -- Title, Image
         TP(Variables.Teleports.Upgrades)
     end,
  })
+ 
+ local TeleportWheelButton = TPTab:CreateButton({
+    Name = "Wheel",
+    Interact = 'Changable',
+    Callback = function()
+        TP(Variables.Teleports.Wheel)
+    end,
+ })
+
 
 
 
@@ -477,4 +637,4 @@ local TPTab = Window:CreateTab("Teleports") -- Title, Image
 
  local Paragraph = AboutTab:CreateParagraph({Title = "Description", Content = "This Script has many hidden features including: Anti AFK, Auto Rejoin Upon Kick, Configuration Saving and many more"})
 
- local Paragraph = AboutTab:CreateParagraph({Title = "Credits", Content = "Twurtle"})
+ local Paragraph = AboutTab:CreateParagraph({Title = "Credits", Content = "Twurtle (Mystic_Twurtle#2575)"})
